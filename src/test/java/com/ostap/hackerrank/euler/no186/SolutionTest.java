@@ -4,6 +4,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,34 +16,34 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @RunWith(Parameterized.class)
 public class SolutionTest {
+  private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 
-  private final int n;
-  private final int expectedCaller;
-  private final int expectedCalled;
+  private final String number;
+  private final String percentile;
+  private final String calls;
 
-  @Parameterized.Parameters(name = "{index}: for n={0}: caller={1} and called={2}")
+  @Parameterized.Parameters(name = "for number={0} and percentile={1}, number of calls={2}")
   public static Iterable<Object[]> data() {
     return Arrays.asList(new Object[][]{
-      {1, 200_007, 100_053},
-      {2, 600_183, 500_439},
-      {3, 600_863, 701_497},
+      {"000000", "1", "622572"},
     });
   }
 
-  public SolutionTest(int n, int expectedCaller, int expectedCalled) {
-    this.n = n;
-    this.expectedCaller = expectedCaller;
-    this.expectedCalled = expectedCalled;
+  public SolutionTest(String number, String percentile, String calls) {
+    this.number = number;
+    this.percentile = percentile;
+    this.calls = calls;
   }
 
   @Test
   public void testCallerAndCalled() throws Exception {
-    //given/when
-    final int caller = Solution.getCaller(n);
-    final int called = Solution.getCalled(n);
+    //given
+    System.setOut(new PrintStream(outContent));
+    System.setIn(new ByteArrayInputStream(number.concat(" ").concat(percentile).getBytes()));
+    //when
+    Solution.main(new String[]{});
 
     //then
-    assertThat(caller).isEqualTo(expectedCaller);
-    assertThat(called).isEqualTo(expectedCalled);
+    assertThat(outContent.toString().trim()).isEqualTo(calls);
   }
 }
