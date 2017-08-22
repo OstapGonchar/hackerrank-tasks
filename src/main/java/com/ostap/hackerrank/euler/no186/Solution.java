@@ -46,11 +46,17 @@ public class Solution {
   }
 
   private static int findRootLeader(int n) {
-    final Phone phone = phoneList.get(n);
-    if (phone.leader == n) {
-      return n;
-    } else {
-      return phone.leader = findRootLeader(phone.leader);
+    int current = n;
+    while (true) {
+      final int leader = phoneList.get(current).leader;
+      if (leader == current) {
+        final Phone phone = phoneList.get(n);
+        if (phone.leader != leader) {
+          phone.leader = leader;
+        }
+        return leader;
+      }
+      current = leader;
     }
   }
 
